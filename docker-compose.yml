@@ -7,10 +7,9 @@ services:
     working_dir: /app
     command: php-fpm
   mariadb:
-    image: mariadb:10.5
+    image: mariadb:10.5.9
     environment:
       MYSQL_ROOT_PASSWORD: 'foobar'
-      MYSQL_DATABASE: 'foobar'
     ports:
       - "3306:3306"
     volumes:
