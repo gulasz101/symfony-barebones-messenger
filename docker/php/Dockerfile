@@ -31,5 +31,13 @@ RUN \
 # install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# install amqp
+RUN \
+    apt-get install -y \
+        librabbitmq-dev \
+        libssh-dev \
+    && pecl install amqp \
+    && docker-php-ext-enable amqp
+
 RUN \
     echo 'alias sf="php bin/console"' >> ~/.bashrc
