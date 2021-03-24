@@ -41,3 +41,13 @@ RUN \
 
 RUN \
     echo 'alias sf="php bin/console"' >> ~/.bashrc
+
+RUN \
+    apt-get install -y \
+        supervisor
+
+COPY ./etc/supervisor/supervisord.conf /etc/supervisor
+#COPY ./etc/supervisor/conf.d/* /etc/supervisor/conf.d/
+COPY ./supervisor.sh /opt/supervisor.sh
+
+ENTRYPOINT ["bash", "/opt/supervisor.sh"]

@@ -10,5 +10,6 @@ final class EmptyMessageHandler implements MessageHandlerInterface
     public function __invoke(EmptyMessage $message)
     {
         dump($message->getName());
+        sleep(1);
     }
 }

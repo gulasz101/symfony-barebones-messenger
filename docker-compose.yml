@@ -4,6 +4,7 @@ services:
     build: docker/php
     volumes:
       - ./:/app
+      - ./docker/php/etc/supervisor/conf.d:/etc/supervisor/conf.d
     working_dir: /app
     command: php-fpm
   mariadb:

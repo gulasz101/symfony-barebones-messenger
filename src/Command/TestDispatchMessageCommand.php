@@ -22,8 +22,7 @@ class TestDispatchMessageCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription(self::$defaultDescription)
-        ;
+            ->setDescription(self::$defaultDescription);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -32,7 +31,9 @@ class TestDispatchMessageCommand extends Command
 
         $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
 
-        $this->messageBus->dispatch(new EmptyMessage('foo bar'));
+        for ($i = 0; $i < 20; $i++) {
+            $this->messageBus->dispatch(new EmptyMessage(self::class . ' #' . $i));
+        }
 
         return Command::SUCCESS;
     }
