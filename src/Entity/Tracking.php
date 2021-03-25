@@ -46,11 +46,6 @@ class Tracking
         return $this->id;
     }
 
-    public function getState(): ?string
-    {
-        return $this->state;
-    }
-
     public function getStatus(): ?string
     {
         return $this->status;
