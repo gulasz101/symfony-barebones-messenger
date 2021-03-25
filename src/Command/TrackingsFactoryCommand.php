@@ -1,14 +1,9 @@
 <?php
-declare(strict_types=1);
 
 namespace App\Command;
 
 use App\Entity\Tracking;
-use App\Message\ProcessTracking;
-use App\Repository\TrackingRepository;
 use App\Support\EntityManagerInterfaceAware;
-use App\Support\MessageBusInterfaceAware;
-use Doctrine\DBAL\LockMode;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,36 +11,32 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class TrackingsManageCommand extends Command
+class TrackingsFactoryCommand extends Command
 {
     use EntityManagerInterfaceAware;
-    use MessageBusInterfaceAware;
 
-    /** @required */
-    public TrackingRepository $trackingRepository;
-
-    protected static $defaultName = 'app:trackings:manage';
+    protected static $defaultName = 'app:trackings:factory';
     protected static $defaultDescription = '';
 
     protected function configure()
     {
         $this
             ->setDescription(self::$defaultDescription)
+            ->addArgument('count', InputArgument::OPTIONAL, 'Amount of trackings to factory (<100)')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $arg1 = $input->getArgument('count');
 
-        $trackings = $this->trackingRepository->createQueryBuilder('t')
-            ->where('t.status IS NULL')
-            ->getQuery()
-            ->execute();
+        if ($arg1) {
+            for ($i = 0; $i<$arg1; $i++) {
+                $this->em->persist(new Tracking());
+            }
 
-        foreach ($trackings as $tracking) {
-            $this->bus->dispatch(new ProcessTracking($tracking));
-            $io->info(sprintf('Tracking #%s dispatched', $tracking->getId()));
+            $this->em->flush();
         }
 
         return Command::SUCCESS;
