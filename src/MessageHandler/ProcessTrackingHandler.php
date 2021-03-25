@@ -28,6 +28,11 @@ final class ProcessTrackingHandler implements MessageHandlerInterface
                 ->getResult()
             ;
 
+            if (null !== $tracking->getStatus()) {
+                // this tracking was already processed.
+                return;
+            }
+
             $trackingData = $this->trackingResolver->performGetRequest($message->getTrackingNumber());
             $tracking->setStatus($trackingData['status']);
             $tracking->setDeliveryAt($trackingData['delivery_at']);
