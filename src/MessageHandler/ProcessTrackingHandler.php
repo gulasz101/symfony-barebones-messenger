@@ -25,8 +25,8 @@ final class ProcessTrackingHandler implements MessageHandlerInterface
             /** @var Tracking[] $trackings */
             $trackings = $this->em->getRepository(Tracking::class)
                 ->createQueryBuilder('t')
-                ->where('t.id = :id')
-                ->setParameter('id', (int)$message->getTrackingNumber())
+                ->where('t.tracking_number = :tracking_number')
+                ->setParameter('tracking_number', $message->getTrackingNumber())
                 ->getQuery()
                 ->setLockMode(LockMode::PESSIMISTIC_WRITE)
                 ->getResult();
