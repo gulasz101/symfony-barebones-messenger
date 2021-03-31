@@ -7,6 +7,7 @@ use App\Entity\Tracking;
 use App\Message\ProcessTracking;
 use App\Repository\TrackingRepository;
 use App\Support\EntityManagerInterfaceAware;
+use App\Support\LoggerAware;
 use App\Support\MessageBusInterfaceAware;
 use Doctrine\DBAL\LockMode;
 use Symfony\Component\Console\Command\Command;
@@ -18,6 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class TrackingsManageCommand extends Command
 {
+    use LoggerAware;
     use EntityManagerInterfaceAware;
     use MessageBusInterfaceAware;
 
@@ -45,7 +47,8 @@ class TrackingsManageCommand extends Command
 
         foreach ($trackings as $tracking) {
             $this->bus->dispatch(new ProcessTracking($tracking));
-            $io->info(sprintf('Tracking #%s dispatched', $tracking->getId()));
+
+            $this->logger->info(sprintf('Tracking #%s dispatched', $tracking->getId()));
         }
 
         return Command::SUCCESS;

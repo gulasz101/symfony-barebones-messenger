@@ -7,7 +7,7 @@ use App\Entity\Tracking;
 
 final class ProcessTracking
 {
-     private string $trackingNumber;
+     public string $trackingNumber;
 
      public function __construct(Tracking $tracking)
      {
