@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\Illuminate;
 
-use Illuminate\Http\Client\Factory;
+use Illuminate\Http\Client\Factory as Http;
 
 /**
  * Trait HttpAware
@@ -12,6 +12,13 @@ use Illuminate\Http\Client\Factory;
  */
 trait HttpAware
 {
+    private Http $http;
+
     /** @required */
-    public Factory $http;
+    public function setHttp(Http $http): self
+    {
+        $this->http = $http;
+
+        return $this;
+    }
 }
