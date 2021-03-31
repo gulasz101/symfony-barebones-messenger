@@ -38,6 +38,7 @@ class TrackingsManageCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->logger->info('app:trackings:manage');
         $io = new SymfonyStyle($input, $output);
 
         $trackings = $this->trackingRepository->createQueryBuilder('t')
