@@ -11,7 +11,7 @@ final class ProcessTracking
 
      public function __construct(Tracking $tracking)
      {
-         $this->trackingNumber = (string)$tracking->getId();
+         $this->trackingNumber = (string)$tracking->getTrackingNumber()->toRfc4122();
      }
 
     public function getTrackingNumber(): string

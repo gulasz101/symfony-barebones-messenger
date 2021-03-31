@@ -22,16 +22,16 @@ class TrackingResolver
     }
 
     /**
-     * @param string $id
+     * @param string $trackingNumber
      * @return array
      * @throws \Illuminate\Http\Client\RequestException
      */
-    public function performGetRequest(string $id): array
+    public function performGetRequest(string $trackingNumber): array
     {
         return $this->http
             ->timeout(5)
             ->acceptJson()
-            ->get($this->apiUri . '/' . $id)
+            ->get($this->apiUri . '/trackings/' . $trackingNumber)
             ->throw()
             ->json();
     }

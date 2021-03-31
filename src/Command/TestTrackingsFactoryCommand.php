@@ -10,12 +10,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Uid\Uuid;
 
-class TrackingsFactoryCommand extends Command
+class TestTrackingsFactoryCommand extends Command
 {
     use EntityManagerInterfaceAware;
 
-    protected static $defaultName = 'app:trackings:factory';
+    protected static $defaultName = 'test:trackings:factory';
     protected static $defaultDescription = '';
 
     protected function configure()
@@ -33,7 +34,7 @@ class TrackingsFactoryCommand extends Command
 
         if ($arg1) {
             for ($i = 0; $i<$arg1; $i++) {
-                $this->em->persist(new Tracking());
+                $this->em->persist((new Tracking())->setTrackingNumber(Uuid::v4()));
             }
 
             $this->em->flush();

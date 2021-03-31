@@ -6,6 +6,8 @@ namespace App\Entity;
 use App\Repository\TrackingRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidV4Generator;
+use Symfony\Component\Uid\UuidV4;
 
 /**
  * @ORM\Entity(repositoryClass=TrackingRepository::class)
@@ -40,6 +42,11 @@ class Tracking
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $registered_at;
+
+    /**
+     * @ORM\Column(type="uuid", length=255)
+     */
+    private $tracking_number;
 
     public function getId(): ?int
     {
@@ -78,6 +85,18 @@ class Tracking
     public function setRegisteredAt(?\DateTimeInterface $registered_at): self
     {
         $this->registered_at = $registered_at;
+
+        return $this;
+    }
+
+    public function getTrackingNumber(): UuidV4
+    {
+        return $this->tracking_number;
+    }
+
+    public function setTrackingNumber(UuidV4 $tracking_number): self
+    {
+        $this->tracking_number = $tracking_number;
 
         return $this;
     }
