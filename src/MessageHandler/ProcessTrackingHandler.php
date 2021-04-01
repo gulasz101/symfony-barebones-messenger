@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\MessageHandler;
@@ -11,6 +12,7 @@ use App\Support\Services\TrackingResolverAware;
 use Carbon\Carbon;
 use Doctrine\DBAL\LockMode;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Uid\UuidV4;
 
 final class ProcessTrackingHandler implements MessageHandlerInterface
 {
@@ -26,7 +28,7 @@ final class ProcessTrackingHandler implements MessageHandlerInterface
             $trackings = $this->em->getRepository(Tracking::class)
                 ->createQueryBuilder('t')
                 ->where('t.tracking_number = :tracking_number')
-                ->setParameter('tracking_number', $message->getTrackingNumber())
+                ->setParameter('tracking_number', UuidV4::fromString($message->getTrackingNumber()), 'uuid')
                 ->getQuery()
                 ->setLockMode(LockMode::PESSIMISTIC_WRITE)
                 ->getResult();
@@ -48,11 +50,11 @@ final class ProcessTrackingHandler implements MessageHandlerInterface
                 );
 
                 $this->em->flush();
+                $this->logger->info(sprintf('#%s processed with with: %s', $tracking->getId(), $message->getTrackingNumber()));
             }
 
             $this->em->getConnection()->commit();
 
-            $this->logger->info(sprintf('#%s processed with with: %s', $tracking->getId(), $message->getTrackingNumber()));
         } catch (\Throwable $e) {
             $this->em->getConnection()->rollBack();
 
