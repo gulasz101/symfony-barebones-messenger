@@ -20,10 +20,10 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
-  mockserver:
-    build: docker/mockserver
-    ports:
-      - "1080:1080"
+  # mockserver:
+  #   build: docker/mockserver
+  #   ports:
+  #     - "1080:1080"
 
 volumes:
   data_mariadb:
