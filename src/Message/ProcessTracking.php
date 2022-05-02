@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 namespace App\Message;
 
-use App\Entity\Tracking;
+use Symfony\Component\Uid\Uuid;
 
 final class ProcessTracking
 {
-     public string $trackingNumber;
+     private string $trackingNumber;
 
-     public function __construct(Tracking $tracking)
+     public function __construct()
      {
-         $this->trackingNumber = (string)$tracking->getTrackingNumber()->toRfc4122();
+         $this->trackingNumber = (string)Uuid::v6()->toRfc4122();
      }
 
     public function getTrackingNumber(): string

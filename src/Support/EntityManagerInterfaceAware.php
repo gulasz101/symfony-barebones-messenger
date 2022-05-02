@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Support;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * Trait EntityManagerInterfaceAware
@@ -12,6 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 trait EntityManagerInterfaceAware
 {
-    /** @required */
+    #[Required]
     public EntityManagerInterface $em;
 }

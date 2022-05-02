@@ -1,6 +1,6 @@
 version: '3.4'
 services:
-  php:
+  app:
     build: docker/php
     volumes:
       - ./:/app
@@ -16,14 +16,12 @@ services:
     volumes:
       - data_mariadb:/var/lib/mysql
   rabbitmq:
-    image: library/rabbitmq:3.7-management-alpine
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
-  # mockserver:
-  #   build: docker/mockserver
-  #   ports:
-  #     - "1080:1080"
 
 volumes:
   data_mariadb:
