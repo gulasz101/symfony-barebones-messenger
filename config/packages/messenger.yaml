@@ -23,6 +23,6 @@ framework:
             # sync: 'sync://'
 
         routing:
-            App\Message\EmptyMessage: async            # Route your messages to the transports
+#            App\Message\EmptyMessage: async            # Route your messages to the transports
             App\Message\ProcessTracking: async
             # 'App\Message\YourMessage': async
