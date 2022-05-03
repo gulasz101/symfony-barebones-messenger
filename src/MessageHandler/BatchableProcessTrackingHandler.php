@@ -5,15 +5,24 @@ namespace App\MessageHandler;
 use App\Entity\Tracking;
 use App\Message\BatchableProcessTracking;
 use App\Support\EntityManagerInterfaceAware;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\Handler\Acknowledger;
 use Symfony\Component\Messenger\Handler\BatchHandlerInterface;
 use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class BatchableProcessTrackingHandler implements BatchHandlerInterface
 {
     use BatchHandlerTrait;
     use EntityManagerInterfaceAware;
+
+    public function __construct(
+        private HttpClientInterface $httpClient
+    )
+    {
+        //...
+    }
 
     public function __invoke(BatchableProcessTracking $message, Acknowledger $ack)
     {
@@ -32,6 +41,8 @@ final class BatchableProcessTrackingHandler implements BatchHandlerInterface
         foreach ($jobs as [$message, $ack]) {
 
             try {
+                $this->httpClient->request(Request::METHOD_GET, 'http://localhost:8080/trackings/' . $message->getTrackingNumber());
+
                 $tracking = new Tracking();
                 $tracking->setTrackingNumber($message->getTrackingNumber());
 
