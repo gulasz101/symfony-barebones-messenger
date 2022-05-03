@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Message\BatchableProcessTracking;
 use App\Message\EmptyMessage;
 use App\Message\ProcessTracking;
 use App\Support\Illuminate\HttpAware;
@@ -38,8 +39,13 @@ class DispatchTrackingsCommand extends Command
 
         for ($i = 0; $i < $input->getArgument('count'); $i++) {
             $message = new ProcessTracking();
+            $batchableMessage = new BatchableProcessTracking();
+
             $this->messageBus->dispatch($message);
+            $this->messageBus->dispatch($batchableMessage);
+
             $output->writeln(sprintf("#%s %s", $i, $message->getTrackingNumber()));
+            $output->writeln(sprintf("#%s %s", $i, $batchableMessage->getTrackingNumber()));
         }
 
         return Command::SUCCESS;

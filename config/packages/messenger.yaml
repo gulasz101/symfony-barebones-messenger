@@ -19,10 +19,24 @@ framework:
                   # override all of this with a service that
                   # implements Symfony\Component\Messenger\Retry\RetryStrategyInterface
                   # service: null
+                options:
+                  exchange:
+                    name: stack
+                  queues:
+                    messages_stack: ~
+
+             batch:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                  exchange:
+                    name: batch
+                  queues:
+                    messages_batch: ~
+
              failed: 'doctrine://default?queue_name=failed'
-            # sync: 'sync://'
 
         routing:
 #            App\Message\EmptyMessage: async            # Route your messages to the transports
             App\Message\ProcessTracking: async
+            App\Message\BatchableProcessTracking: batch
             # 'App\Message\YourMessage': async
