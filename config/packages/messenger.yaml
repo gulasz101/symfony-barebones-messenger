@@ -5,7 +5,7 @@ framework:
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
-             async:
+             stack:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 # default configuration
                 retry_strategy:
@@ -25,18 +25,27 @@ framework:
                   queues:
                     messages_stack: ~
 
-             batch:
+             batch_fibers:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 options:
                   exchange:
-                    name: batch
+                    name: batch_fibers
                   queues:
-                    messages_batch: ~
+                    messages_batch_fibers: ~
+
+             batch_asyncawait:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                  exchange:
+                    name: batch_asyncawait
+                  queues:
+                    messages_batch_asyncawait: ~
 
              failed: 'doctrine://default?queue_name=failed'
 
         routing:
 #            App\Message\EmptyMessage: async            # Route your messages to the transports
-            App\Message\ProcessTracking: async
-            App\Message\BatchableProcessTracking: batch
+            App\Message\ProcessTracking: stack
+            App\Message\BatchableFiberProcessTracking: batch_fibers
+            App\Message\BatchableAsyncAwaitProcessTracking: batch_asyncawait
             # 'App\Message\YourMessage': async

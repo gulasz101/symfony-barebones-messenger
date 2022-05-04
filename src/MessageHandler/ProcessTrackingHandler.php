@@ -30,7 +30,10 @@ final class ProcessTrackingHandler implements MessageHandlerInterface
         $this->httpClient->request(Request::METHOD_GET, 'http://localhost:8080/trackings/' . $message->getTrackingNumber());
 
         $tracking = new Tracking();
-        $tracking->setTrackingNumber($message->getTrackingNumber());
+        $tracking
+            ->setTrackingNumber($message->getTrackingNumber())
+            ->setOriginMessage($message)
+        ;
 
         $this->em->persist($tracking);
         $this->em->flush();

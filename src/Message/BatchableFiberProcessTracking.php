@@ -4,7 +4,7 @@ namespace App\Message;
 
 use Symfony\Component\Uid\Uuid;
 
-final class BatchableProcessTracking
+final class BatchableFiberProcessTracking
 {
     private string $trackingNumber;
 

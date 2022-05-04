@@ -16,6 +16,7 @@
         "doctrine/orm": "^2.8",
         "fakerphp/faker": "^1.19",
         "nesbot/carbon": "^2.46",
+        "react/async": "^4@dev",
         "symfony/console": "5.*.*",
         "symfony/doctrine-messenger": "5.*.*",
         "symfony/dotenv": "5.*.*",

@@ -3,7 +3,7 @@
 namespace App\MessageHandler;
 
 use App\Entity\Tracking;
-use App\Message\BatchableProcessTracking;
+use App\Message\BatchableFiberProcessTracking;
 use App\Support\EntityManagerInterfaceAware;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +13,7 @@ use Symfony\Component\Messenger\Handler\BatchHandlerTrait;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final class BatchableProcessTrackingHandler implements BatchHandlerInterface
+final class BatchableFiberProcessTrackingHandler implements BatchHandlerInterface
 {
     use BatchHandlerTrait;
     use EntityManagerInterfaceAware;
@@ -25,7 +25,7 @@ final class BatchableProcessTrackingHandler implements BatchHandlerInterface
         //...
     }
 
-    public function __invoke(BatchableProcessTracking $message, Acknowledger $ack)
+    public function __invoke(BatchableFiberProcessTracking $message, Acknowledger $ack)
     {
         return $this->handle($message, $ack);
     }
@@ -41,13 +41,16 @@ final class BatchableProcessTrackingHandler implements BatchHandlerInterface
         $this->em->flush();
     }
 
-    private function processSingleMessage(BatchableProcessTracking $message, Acknowledger $ack): void
+    private function processSingleMessage(BatchableFiberProcessTracking $message, Acknowledger $ack): void
     {
         try {
             $this->httpClient->request(Request::METHOD_GET, 'http://localhost:8080/trackings/' . $message->getTrackingNumber());
 
             $tracking = new Tracking();
-            $tracking->setTrackingNumber($message->getTrackingNumber());
+            $tracking
+                ->setTrackingNumber($message->getTrackingNumber())
+                ->setOriginMessage($message)
+            ;
 
             $this->em->persist($tracking);
 
@@ -62,7 +65,7 @@ final class BatchableProcessTrackingHandler implements BatchHandlerInterface
     {
         $asyncJobs = new ArrayCollection();
         /**
-         * @var BatchableProcessTracking $message
+         * @var BatchableFiberProcessTracking $message
          * @var Acknowledger $ack
          */
         foreach ($jobs as [$message, $ack]) {

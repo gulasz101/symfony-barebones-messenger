@@ -19,6 +19,9 @@ class Tracking
     #[ORM\Column(type: 'string', length: 255)]
     private string $tracking_number;
 
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $origin_message = null;
+
     #[ORM\Column(type: 'carbon_immutable')]
     private CarbonImmutable $created_at;
 
@@ -59,5 +62,10 @@ class Tracking
         $this->tracking_number = $tracking_number;
 
         return $this;
+    }
+
+    public function setOriginMessage(object $originMessage): void
+    {
+        $this->origin_message = $originMessage::class;
     }
 }

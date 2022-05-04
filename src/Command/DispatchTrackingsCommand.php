@@ -2,7 +2,8 @@
 
 namespace App\Command;
 
-use App\Message\BatchableProcessTracking;
+use App\Message\BatchableAsyncAwaitProcessTracking;
+use App\Message\BatchableFiberProcessTracking;
 use App\Message\EmptyMessage;
 use App\Message\ProcessTracking;
 use App\Support\Illuminate\HttpAware;
@@ -38,14 +39,18 @@ class DispatchTrackingsCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         for ($i = 0; $i < $input->getArgument('count'); $i++) {
-            $message = new ProcessTracking();
-            $batchableMessage = new BatchableProcessTracking();
+            $stackMessage = new ProcessTracking();
+            $batchableFiberMessage = new BatchableFiberProcessTracking();
+            $batchableAsynAwaitMessage = new BatchableAsyncAwaitProcessTracking();
 
-            $this->messageBus->dispatch($message);
-            $this->messageBus->dispatch($batchableMessage);
+            $this->messageBus->dispatch($stackMessage);
+            $this->messageBus->dispatch($batchableFiberMessage);
+            $this->messageBus->dispatch($batchableAsynAwaitMessage);
 
-            $output->writeln(sprintf("#%s %s", $i, $message->getTrackingNumber()));
-            $output->writeln(sprintf("#%s %s", $i, $batchableMessage->getTrackingNumber()));
+            $output->writeln(sprintf("#%s %s", $i, $stackMessage->getTrackingNumber()));
+            $output->writeln(sprintf("#%s %s", $i, $batchableFiberMessage->getTrackingNumber()));
+            $output->writeln(sprintf("#%s %s", $i, $batchableAsynAwaitMessage->getTrackingNumber()));
+            $output->writeln('');
         }
 
         return Command::SUCCESS;
