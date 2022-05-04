@@ -35,7 +35,10 @@ final class BatchableFiberProcessTrackingHandler implements BatchHandlerInterfac
         $asyncJobs = $this->initAsyncJobs($jobs);
 
         do {
-            $asyncJobs = $asyncJobs->filter(fn(\Fiber $asyncJob) => $asyncJob->isRunning());
+            $asyncJobs = $asyncJobs->filter(fn(\Fiber $asyncJob) => !$asyncJob->isTerminated());
+            foreach ($asyncJobs as $asyncJob) {
+                $asyncJob->resume();
+            }
         } while (!$asyncJobs->isEmpty());
 
         $this->em->flush();
@@ -43,8 +46,21 @@ final class BatchableFiberProcessTrackingHandler implements BatchHandlerInterfac
 
     private function processSingleMessage(BatchableFiberProcessTracking $message, Acknowledger $ack): void
     {
+        \Fiber::suspend();
+
         try {
-            $this->httpClient->request(Request::METHOD_GET, 'http://localhost:8080/trackings/' . $message->getTrackingNumber());
+            $response = $this->httpClient
+                ->request(
+                    Request::METHOD_GET,
+                    'http://localhost:8080/trackings/' . $message->getTrackingNumber()
+                )
+            ;
+
+            foreach ($this->httpClient->stream($response) as $r => $chunk) {
+                if (!$chunk->isLast()) {
+                    \Fiber::suspend();
+                }
+            }
 
             $tracking = new Tracking();
             $tracking
@@ -71,8 +87,8 @@ final class BatchableFiberProcessTrackingHandler implements BatchHandlerInterfac
         foreach ($jobs as [$message, $ack]) {
             $asyncJob = new \Fiber(fn() => $this->processSingleMessage($message, $ack));
 
-            $asyncJob->start();
             $asyncJobs->add($asyncJob);
+            $asyncJob->start();
         }
 
         return $asyncJobs;
